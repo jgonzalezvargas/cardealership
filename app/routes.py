@@ -1,8 +1,8 @@
 from flask import render_template, flash, redirect, url_for
 from flask_login import current_user, login_user, logout_user, login_required
 from app import app
-from app.forms import LoginForm
-from app.queries.users import query_user_login
+from app.forms import LoginForm, RegistrationForm
+from app.queries.users import query_user_login, query_insert_user
 from app.user import User
 import sys
 
@@ -10,8 +10,7 @@ import sys
 @app.route('/index')
 @login_required
 def index():
-    print(current_user.name, file=sys.stderr)
-
+    
     return render_template('index.html', title='Home')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -44,4 +43,28 @@ def logout():
     return redirect(url_for('index'))
     
     
+@app.route('/new_user', methods=['GET', 'POST'])
+@login_required
+def create_user():
+    if current_user.role != 'Admin':
+        return redirect(url_for('index'))
 
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        
+        #TODO GENERATE PASSWORD
+        pswd = 'default'
+        
+        s = form.name.data, form.last_name.data, form.email.data, pswd, form.phone.data, form.role.data
+        print(s, file=sys.stderr)
+                
+        insertion = query_insert_user(form.name.data, form.last_name.data, form.email.data, pswd, form.phone.data, form.role.data)
+        
+        #TODO SEND EMAIL WITH GENERATED PASSWORD TO USER
+        
+        if insertion:
+            flash('Usuario creado exitosamente')
+            return redirect(url_for('index'))
+        flash('ERROR')
+        return redirect(url_for('new_user'))
+    return render_template('create_user.html', title='Crear usuario', form=form)
