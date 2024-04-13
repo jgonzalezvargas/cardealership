@@ -22,12 +22,10 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Crear Usuario')
     
     def validate_email(self, email):
-        print('checking email', file=sys.stderr)
         if query_check_email(email=email.data):
             raise ValidationError("Ese Email ya esta registrado")
         
     def validate_role(self, role):
-        print(role.data, file=sys.stderr)
         if role.data == '-':
             raise ValidationError("Seleccione un Rol")
         
