@@ -6,6 +6,7 @@ import sys
 from app.queries.users import query_check_email
 
 ROLES = ['-', 'Compras', 'Ventas', 'Manager', 'Admin']
+STATUS = [True, False]
 
 class LoginForm(FlaskForm):
     username = StringField('User', validators=[DataRequired()])
@@ -29,3 +30,22 @@ class RegistrationForm(FlaskForm):
         if role.data == '-':
             raise ValidationError("Seleccione un Rol")
         
+class EditProfileForm(FlaskForm):
+    name = StringField('Nombre', validators=[DataRequired()])
+    last_name = StringField('Apellido', validators=[DataRequired()])
+    phone = StringField('Telefono', validators=[DataRequired()])
+    submit = SubmitField('Editar Usuario')
+
+class AdminEditUser(FlaskForm):
+    name = StringField('Nombre', validators=[DataRequired()])
+    last_name = StringField('Apellido', validators=[DataRequired()])
+    email = StringField('E-mail', validators=[DataRequired(), Email()])
+    phone = StringField('Telefono', validators=[DataRequired()])
+    role = SelectField('Rol', choices = ROLES, validators=[DataRequired()])
+    status = SelectField('Estado', choices = STATUS, validators=[DataRequired()])
+    submit = SubmitField('Editar Usuario')
+    
+    def validate_role(self, role):
+        if role.data == '-':
+            raise ValidationError("Seleccione un Rol")
+    
