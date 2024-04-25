@@ -1,1 +1,5 @@
 venv/
+autotools/
+master.py
+settings.toml
+*__pycache__*
