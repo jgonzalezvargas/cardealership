@@ -68,7 +68,7 @@ def update_user(user_id, name, last_name, phone):
 
 
 def get_user_list():
-    select_query = f"SELECT user_id, name as username, last_name, email, phone, role, active_employee FROM {Cardealership.USERS}"
+    select_query = f"SELECT user_id, name as username, last_name, email, phone, role, active_employee FROM {Cardealership.USERS} ORDER BY user_id DESC"
     auto_db = Database(TRANSACTIONS_DATABASE, source=DatabaseInstances.AUTO360)
     user_data = auto_db.read_as_pd(select_query)
     auto_db.close_connection()
