@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Marca: {{ car.brand }}</h1>
+    <h1>Modelo: {{ car.model }}</h1>
+    <h1>Versión: {{ car.version }}</h1>
+    <h1>Año: {{ car.year }}</h1>
+    <h1>PPU: {{ car.ppu }}</h1>
+    <h1>Chasis: {{ car.chasis }}</h1>
+
+    <p><a href="{{ url_for('edit_car', car_id=car.car_id) }}">Editar datos del Auto</a></p>
+
+{% endblock %}
