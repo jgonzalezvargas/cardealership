@@ -1,9 +1,11 @@
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 from app import app
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, AdminEditUser
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, AdminEditUser, CreateClient, EditClient
 from app.queries.users import query_user_login, query_insert_user, query_get_user_data, update_user, get_user_list, get_complete_user_data, admin_update_user
+from app.queries.clients import query_insert_client, query_get_client_data, update_client, get_client_list
 from app.user import User
+from app.client import Client
 import sys
 
 @app.route('/')
@@ -152,3 +154,75 @@ def admin_edit_user(userid):
     
     return render_template('admin_edit_user.html', title='Edit Profile',
                            form=form, user=u)
+    
+
+@app.route('/new_client', methods=['GET', 'POST'])
+@login_required
+def new_client():
+    form = CreateClient()
+    if form.validate_on_submit():
+        print(form.rut.data, form.client_name.data, form.client_last_name.data, form.email.data, form.address.data, form.phone.data, file=sys.stderr)
+        client_id = query_insert_client(form.rut.data, form.client_name.data, form.client_last_name.data, form.email.data, form.address.data, form.phone.data)
+        print(client_id, file=sys.stderr)
+        if client_id:
+            flash('Cliente creado exitosamente')
+            #TODO redirect to client page
+            return redirect(url_for('client_profile', client_id=client_id[0]))
+        flash('ERROR')
+        return redirect(url_for('new_client'))
+    return render_template('create_client.html', title='Crear Cliente', form=form)
+
+
+@app.route('/client/<client_id>')
+@login_required
+def client_profile(client_id):
+    client_data = query_get_client_data(client_id)
+    client = Client(client_id = client_id, client_name=client_data['name'], client_last_name=client_data['last_name'], email=client_data['email'], rut=client_data['rut'], phone=client_data['phone'], address=client_data['address'])
+    return render_template('client_profile.html', title=client.client_name + ' ' + client.client_last_name, client=client)
+
+
+@app.route('/edit_client/<client_id>', methods=['GET', 'POST'])
+@login_required
+def edit_client(client_id):
+
+    client_data = query_get_client_data(client_id)
+
+    client = Client(client_id = client_id, client_name=client_data['name'], client_last_name=client_data['last_name'], email=client_data['email'], rut=client_data['rut'], phone=client_data['phone'], address=client_data['address'])
+    
+    form = EditClient(client_id)
+    if form.validate_on_submit():
+        client.client_name = form.client_name.data
+        client.client_last_name = form.client_last_name.data
+        client.phone = form.phone.data
+        client.email = form.email.data
+        client.rut = form.rut.data
+        client.address = form.address.data
+        
+        update_client(client_id=client_id, client_name=client.client_name, client_last_name=client.client_last_name, phone=client.phone, email=client.email, rut=client.rut, address=client.address)
+        flash('Your changes have been saved.')
+        return redirect(url_for('client_profile', client_id=client_id))
+    
+    elif request.method == 'GET':       
+        form.client_name.data = client.client_name
+        form.client_last_name.data = client.client_last_name
+        form.phone.data = client.phone
+        form.email.data = client.email
+        form.rut.data = client.rut
+        form.address.data = client.address
+    
+    return render_template('edit_client.html', title='Edit Profile',
+                           form=form, client=client)
+    
+    
+@app.route('/client_list', methods=['GET', 'POST'])
+@login_required
+def client_list():
+
+    
+    clients = list()
+    client_data = get_client_list()
+    for _, client in client_data.iterrows():
+        loaded_client = Client(client.client_id, client.rut, client.client_name, client.client_last_name, email=client.email, phone=client.phone)
+        clients.append(loaded_client)
+        
+    return render_template('client_list.html', title='Lista de Clientes', clients=clients)    
