@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Lista de Clientes</h1>
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Apellido</th>
+                <th scope="col">RUT</th>
+                <th scope="col">E-Mail</th>
+                <th scope="col">Telefono</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in clients %}
+            <tr>
+                <td>{{ client.client_name }}</td>
+                <td>{{ client.client_last_name }}</td>
+                <td>{{ client.rut }}</td>
+                <td>{{ client.email }}</td>
+                <td>{{ client.phone }}</td>
+                <td>
+                    <a href="{{ url_for('client_profile', client_id = client.client_id) }}">Ver Cliente</a>
+                    <a href="{{ url_for('edit_client', client_id = client.client_id) }}">Editar Cliente</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+{% endblock %}

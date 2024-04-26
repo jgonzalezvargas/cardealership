@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Nombre: {{ client.client_name }}</h1>
+    <h1>Apellido: {{ client.client_last_name }}</h1>
+    <h1>RUT: {{ client.rut }}</h1>
+    <h1>email: {{ client.email }}</h1>
+    <h1>Telefono: {{ client.phone }}</h1>
+    <h1>Dirección: {{ client.address }}</h1>
+
+    <p><a href="{{ url_for('edit_client', client_id=client.client_id) }}">Editar datos de Cliente</a></p>
+
+{% endblock %}
