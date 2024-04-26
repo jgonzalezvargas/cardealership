@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Lista de Autos</h1>
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Marca</th>
+                <th scope="col">Modelo</th>
+                <th scope="col">Version</th>
+                <th scope="col">Año</th>
+                <th scope="col">PPU</th>
+                <th scope="col">Chasis</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for car in cars %}
+            <tr>
+                <td>{{ car.brand }}</td>
+                <td>{{ car.model }}</td>
+                <td>{{ car.version }}</td>
+                <td>{{ car.year }}</td>
+                <td>{{ car.ppu }}</td>
+                <td>{{ car.chasis }}</td>
+                <td>
+                    <a href="{{ url_for('car_profile', car_id = car.car_id) }}">Ver Auto</a>
+                    <a href="{{ url_for('edit_car', car_id = car.car_id) }}">Actualizar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+{% endblock %}

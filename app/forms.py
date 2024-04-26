@@ -8,6 +8,7 @@ import sys
 
 from app.queries.users import query_check_email
 from app.queries.clients import query_check_client_email, query_check_client_rut, get_client_email, get_client_rut
+from app.queries.cars import check_car_chasis, check_car_ppu, get_car_ppu, get_car_chasis
 
 ROLES = ['-', 'Compras', 'Ventas', 'Manager', 'Admin']
 STATUS = [True, False]
@@ -96,9 +97,7 @@ class EditClient(FlaskForm):
     def __init__(self, client_id):
         super().__init__()
         self.client_id = client_id
-        
-
-    
+  
     def validate_rut(self, rut):
         original_rut = get_client_rut(self.client_id)
         if rut.data != original_rut:
@@ -121,7 +120,47 @@ class EditClient(FlaskForm):
         if email.data != original_email:
             if query_check_client_email(email=email.data):
                 raise ValidationError("Ese Email ya esta registrado")
+            
+            
+class CreateCar(FlaskForm):
+    brand = StringField('Marca', validators=[DataRequired()])
+    model = StringField('Modelo', validators=[DataRequired()])
+    version = StringField('Versión', validators=[DataRequired()])
+    year = StringField('Año', validators=[DataRequired()])
+    ppu = StringField('PPU', validators=[DataRequired()])
+    chasis = StringField('chasis', validators=[DataRequired()])
+    submit = SubmitField('Crear Auto') 
     
-             
+    def validate_ppu(self, ppu):
+        if check_car_ppu(ppu.data):
+            raise ValidationError("Ya existe un auto con ese PPU")
+        
+    def validate_chasis(self, chasis):
+        if check_car_chasis(chasis.data):
+            raise ValidationError("Ya existe un auto con ese chasis")
+        
+        
+class EditCar(FlaskForm):
+    brand = StringField('Marca', validators=[DataRequired()])
+    model = StringField('Modelo', validators=[DataRequired()])
+    version = StringField('Versión', validators=[DataRequired()])
+    year = StringField('Año', validators=[DataRequired()])
+    ppu = StringField('PPU', validators=[DataRequired()])
+    chasis = StringField('chasis', validators=[DataRequired()])
+    submit = SubmitField('Editar Auto') 
     
-    
+    def __init__(self, car_id):
+        super().__init__()
+        self.car_id = car_id
+
+    def validate_ppu(self, ppu):
+        original_ppu = get_car_ppu(self.car_id)
+        if ppu.data != original_ppu:
+            if check_car_ppu(ppu.data):
+                raise ValidationError("Ya existe un auto con ese PPU")
+
+    def validate_chasis(self, chasis):
+        original_chasis = get_car_chasis(self.car_id)
+        if chasis.data != original_chasis:
+            if check_car_ppu(chasis.data):
+                raise ValidationError("Ya existe un auto con ese chasis")

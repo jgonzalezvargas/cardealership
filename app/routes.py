@@ -1,11 +1,13 @@
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 from app import app
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, AdminEditUser, CreateClient, EditClient
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, AdminEditUser, CreateClient, EditClient, CreateCar, EditCar
 from app.queries.users import query_user_login, query_insert_user, query_get_user_data, update_user, get_user_list, get_complete_user_data, admin_update_user
 from app.queries.clients import query_insert_client, query_get_client_data, update_client, get_client_list
-from app.user import User
-from app.client import Client
+from app.queries.cars import query_insert_car, query_get_car_data, update_car, get_car_list
+from app.models.user import User
+from app.models.client import Client
+from app.models.car import Car
 import sys
 
 @app.route('/')
@@ -217,8 +219,6 @@ def edit_client(client_id):
 @app.route('/client_list', methods=['GET', 'POST'])
 @login_required
 def client_list():
-
-    
     clients = list()
     client_data = get_client_list()
     for _, client in client_data.iterrows():
@@ -226,3 +226,70 @@ def client_list():
         clients.append(loaded_client)
         
     return render_template('client_list.html', title='Lista de Clientes', clients=clients)    
+
+
+@app.route('/new_car', methods=['GET', 'POST'])
+@login_required
+def create_car():
+    form = CreateCar()
+    if form.validate_on_submit():
+        car_id = query_insert_car(form.ppu.data, form.chasis.data, form.brand.data, form.model.data, form.version.data, form.year.data)
+
+        if car_id:
+            flash('Auto creado exitosamente')
+            return redirect(url_for('car_profile', car_id=car_id))
+        flash('ERROR')
+        return redirect(url_for('create_car'))
+    return render_template('create_car.html', title='Crear Auto', form=form)
+
+
+@app.route('/car/<car_id>')
+@login_required
+def car_profile(car_id):
+    car_data = query_get_car_data(car_id)
+    car = Car(car_id, car_data['ppu'], car_data['chasis'], car_data['brand'], car_data['model'], car_data['version'], car_data['year'])
+    return render_template('car_profile.html', title=car.brand + ' ' + car.model + ' ' + car.ppu, car=car)
+
+
+@app.route('/edit_car/<car_id>', methods=['GET', 'POST'])
+@login_required
+def edit_car(car_id):
+
+    car_data = query_get_car_data(car_id)
+
+    car = Car(car_id, car_data['ppu'], car_data['chasis'], car_data['brand'], car_data['model'], car_data['version'], car_data['year'])
+    
+    form = EditCar(car_id)
+    if form.validate_on_submit():
+        car.ppu = form.ppu.data
+        car.chasis = form.chasis.data
+        car.brand = form.brand.data
+        car.model = form.model.data
+        car.version = form.version.data
+        car.year = form.year.data
+        
+        update_car(car_id, car.ppu, car.chasis, car.brand, car.model, car.version, car.year)
+        flash('Your changes have been saved.')
+        return redirect(url_for('car_profile', car_id=car_id))
+    
+    elif request.method == 'GET':       
+        form.ppu.data = car.ppu
+        form.chasis.data = car.chasis
+        form.brand.data = car.brand
+        form.model.data = car.model
+        form.version.data = car.version
+        form.year.data = car.year
+    
+    return render_template('edit_car.html', title='Edit Car', form=form)
+
+
+@app.route('/car_list', methods=['GET', 'POST'])
+@login_required
+def car_list():
+    cars = list()
+    car_data = get_car_list()
+    for _, car in car_data.iterrows():
+        loaded_client = Car(car.car_id, car.ppu, car.chasis, car.brand, car.model, car.version, car.year)
+        cars.append(loaded_client)
+        
+    return render_template('car_list.html', title='Lista de Autos', cars=cars)    
