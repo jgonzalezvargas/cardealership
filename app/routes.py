@@ -1,13 +1,17 @@
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 from app import app
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, AdminEditUser, CreateClient, EditClient, CreateCar, EditCar
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, AdminEditUser, CreateClient, EditClient, CreateCar, EditCar, CreatePurchase
 from app.queries.users import query_user_login, query_insert_user, query_get_user_data, update_user, get_user_list, get_complete_user_data, admin_update_user
 from app.queries.clients import query_insert_client, query_get_client_data, update_client, get_client_list
 from app.queries.cars import query_insert_car, query_get_car_data, update_car, get_car_list
+from app.queries.purchases import query_insert_purchases, get_purchases_list, get_purchase
+from app.queries.prices import get_prices
 from app.models.user import User
 from app.models.client import Client
 from app.models.car import Car
+from app.models.purchase import Purchase
+from app.models.prices import Price
 import sys
 
 @app.route('/')
@@ -77,7 +81,7 @@ def create_user():
 @app.route('/user/<userid>')
 @login_required
 def user(userid):
-    if current_user.user_id != userid:
+    if current_user.user_id != userid or current_user.role != 'Admin':
         return redirect(url_for('user', userid=current_user.user_id))
     user_data = query_get_user_data(userid)
     user = User(userid, user_data['name'], user_data['last_name'], user_data['email'], user_data['role'], user_data['phone'])
@@ -293,3 +297,73 @@ def car_list():
         cars.append(loaded_client)
         
     return render_template('car_list.html', title='Lista de Autos', cars=cars)    
+
+
+@app.route('/new_purchase/', methods=['GET', 'POST'])
+@login_required
+def new_purchase():
+    form = CreatePurchase()
+    if form.validate_on_submit():
+        forms_data = [form.client_id.data, 
+             form.car_id.data, 
+             form.mileage.data, 
+             form.car_color.data, 
+             form.purchase_date.data, 
+             form.car_price.data, 
+             form.negotiated_price.data, 
+             form.management.data, 
+             form.bill_number.data
+             ]
+        print(forms_data, file=sys.stderr)
+        
+        p_id = query_insert_purchases(current_user.user_id,
+                                        form.car_id.data,
+                                        form.client_id.data,
+                                        form.mileage.data, 
+                                        form.car_color.data, 
+                                        form.purchase_date.data, 
+                                        form.car_price.data, 
+                                        form.negotiated_price.data, 
+                                        form.management.data, 
+                                        form.bill_number.data)
+
+        if p_id:
+            flash('Compra ingresada exitosamente')
+            return redirect(url_for('purchase', purchase_id=p_id))
+        flash('ERROR')
+        return redirect(url_for('new_purchase'))
+    return render_template('create_purchase.html', title='Ingresar Compra', form=form)
+
+#TODO add initial client_id / car_id
+
+@app.route('/purchases_list', methods=['GET', 'POST'])
+@login_required
+def purchases_list():
+    purchases = list()
+    purchase_data = get_purchases_list()
+    for _, p in purchase_data.iterrows():
+        user = User(user_id = p.user_id, name=p.username, last_name=p.last_name)
+        client = Client(client_id=p.client_id, client_name=p.client_name, client_last_name=p.client_last_name)
+        car = Car(car_id=p.car_id, brand=p.brand, model=p.model, version=p.version, ppu=p.ppu)
+        loaded_purchase = Purchase(p.purchase_id, user, client, car, p.mileage, p.purchase_date, p.price, p.negotiated_price, p.management, p.stock)
+        purchases.append(loaded_purchase)
+        
+    return render_template('purchases_list.html', title='Lista de Consignaciones', purchases=purchases)    
+
+
+@app.route('/purchase/<purchase_id>', methods=['GET', 'POST'])
+@login_required
+def purchase(purchase_id):
+    client_data, car_data, purchase_data = get_purchase(purchase_id)
+    prices = get_prices(purchase_id)
+    price_list = list()
+    for _, row in prices.iterrows():
+        price = Price(row.price, row.datetime)
+        price_list.append(price)
+    client = Client(client_id=client_data['client_id'], client_name=client_data['client_name'], client_last_name=client_data['client_last_name'], rut=client_data['rut'], phone=client_data['phone'])
+    car = Car(car_id=car_data['car_id'], brand=car_data['brand'], model=car_data['model'], version=car_data['version'], ppu=car_data['ppu'], year=car_data['year'], chasis=car_data['chasis'])
+    purchase = Purchase(purchase_id=purchase_id, client=client, car=car, 
+                        mileage=purchase_data['mileage'], purchase_date=purchase_data['purchase_date'], negotiated_price=purchase_data['negotiated_price'], car_color= purchase_data['car_color'],
+                        bill_number=purchase_data['bill_number'], management=purchase_data['management'], stock=purchase_data['stock'], prices=price_list)
+        
+    return render_template('purchase.html', title=f'Consignación de {car.ppu}', purchase=purchase)    

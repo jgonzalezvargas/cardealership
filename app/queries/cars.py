@@ -71,3 +71,18 @@ def get_car_list():
     auto_db.close_connection()
     
     return car_data
+
+
+def get_carid_ppu():
+    select_query = f"SELECT car_id, ppu FROM {Cardealership.CARS} ORDER BY ppu DESC"
+    auto_db = Database(TRANSACTIONS_DATABASE, source=DatabaseInstances.AUTO360)
+    car_data = auto_db.read_as_pd(select_query)
+    auto_db.close_connection()
+    ordered_data = list()
+    
+    for _, car in car_data.iterrows():
+        tup = (car.car_id, car.ppu)
+        ordered_data.append(tup)
+    
+    return ordered_data
+    

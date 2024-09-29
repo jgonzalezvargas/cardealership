@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Crear Compra</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.client_id.label }}<br>
+            {{ form.client_id(size=1) }}<br>
+            {% for error in form.client_id.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.car_id.label }}<br>
+            {{ form.car_id(size=1) }}<br>
+            {% for error in form.car_id.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.mileage.label }}<br>
+            {{ form.mileage(size=32) }}<br>
+            {% for error in form.mileage.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.car_color.label }}<br>
+            {{ form.car_color(size=32) }}<br>
+            {% for error in form.car_color.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.purchase_date.label }}<br>
+            {{ form.purchase_date(size=32) }}<br>
+            {% for error in form.purchase_date.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>        
+        <p>
+            {{ form.car_price.label }}<br>
+            {{ form.car_price(size=32) }}<br>
+            {% for error in form.car_price.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.negotiated_price.label }}<br>
+            {{ form.negotiated_price(size=32) }}<br>
+            {% for error in form.negotiated_price.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.management.label }}<br>
+            {{ form.management(size=1) }}<br>
+            {% for error in form.management.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.bill_number.label }}<br>
+            {{ form.bill_number(size=32) }}<br>
+            {% for error in form.bill_number.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}

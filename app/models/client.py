@@ -1,5 +1,5 @@
 class Client():
-    def __init__(self, client_id, rut, client_name, client_last_name, address= None, email = None, phone = None, cars = None, purchases = None, sales = None) -> None:
+    def __init__(self, client_id, rut= None, client_name= None, client_last_name= None, address= None, email = None, phone = None, cars = None, purchases = None, sales = None) -> None:
         self.client_id = client_id
         self.rut = rut
         self.client_name = client_name
