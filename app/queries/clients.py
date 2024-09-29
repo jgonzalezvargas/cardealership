@@ -71,3 +71,17 @@ def get_client_list():
     auto_db.close_connection()
     
     return client_data
+
+def get_clientid_rut():
+    select_query = f"SELECT client_id, rut FROM {Cardealership.CLIENTS} ORDER BY RUT DESC"
+    auto_db = Database(TRANSACTIONS_DATABASE, source=DatabaseInstances.AUTO360)
+    client_data = auto_db.read_as_pd(select_query)
+    auto_db.close_connection()
+    ordered_data = list()
+    
+    for _, client in client_data.iterrows():
+        tup = (client.client_id, client.rut)
+        ordered_data.append(tup)
+    
+    return ordered_data
+    
