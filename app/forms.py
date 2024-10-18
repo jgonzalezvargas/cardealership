@@ -14,6 +14,8 @@ ROLES = ['-', 'Compras', 'Ventas', 'Manager', 'Admin']
 STATUS = [True, False]
 MANAGEMENT = [(1, 'Compra'),(2, 'Consignación Física'), (3, 'Consignación Virtual'), (4, 'Parte de pago')] # SELECT * FROM management;
 STOCK = [(1, 'Pausa'),(2, 'Reservado'), (3, 'Stock'), (4, 'Eliminado'), (5, 'Vendido')] # SELECT * FROM stock_status;
+SOURCES = [(1, 'Autosusados'),(2, 'Chileautos'),(3, 'Cliente Antiguo'),(4, 'Cliente Consignado'),(5, 'Cliente llega sin aviso'),(6, 'Facebook MKT'),(7, 'Instagram'),
+            (8, 'Mayorista'),(9, 'Mercado Libre'),(10, 'Referido'),(11, 'TikTok'),(12, 'Venta Interna'),(13, 'Web Auto360'),(14, 'Yapo')] # SELECT * FROM sale_source
 
 
 class LoginForm(FlaskForm):
@@ -194,3 +196,36 @@ class EditPurchase(FlaskForm):
     stock = SelectField('Stock', choices=STOCK, validators=[DataRequired()])
     bill_number = StringField('Número de Factura', validators=[DataRequired()]) #TODO validar label
     submit = SubmitField('Editar Compra')
+    
+    
+class CreateSale(FlaskForm):
+    clients = get_clientid_rut()
+    cars = get_carid_ppu()
+    client_id = SelectField('RUT Cliente', choices=clients, validators=[DataRequired()])
+    car_id = SelectField('Patente Auto', choices=cars, validators=[DataRequired()])
+    sale_date = DateField('Fecha de la Venta', format='%Y-%m-%d', validators=[DataRequired()])
+    sale_price = StringField('Precio Venta', validators=[DataRequired()]) #TODO valor del auto
+    real_cost = StringField('Costo Real', validators=[DataRequired()]) #TODO valor del auto
+    source = SelectField('Fuente Venta', choices=SOURCES, validators=[DataRequired()])
+    credit_comission = StringField('Comisión Crédito')
+    card = SelectField('Tarjeta', choices=[(0, False), (1,True)], validators=[DataRequired()])
+    credit = SelectField('Crédito', choices=[(0, False), (1,True)], validators=[DataRequired()])
+    car_as_payment = SelectField('Auto en P.P.', choices=[(0, False), (1,True)], validators=[DataRequired()])
+    mileage = StringField('Kilometraje', validators=[DataRequired()])
+    car_color = StringField('Color del Auto', validators=[DataRequired()])
+    submit = SubmitField('Ingresar Venta') 
+    
+    
+class EditSale(FlaskForm):
+    sale_date = DateField('Fecha de la Venta', format='%Y-%m-%d', validators=[DataRequired()])
+    sale_price = StringField('Precio Venta', validators=[DataRequired()]) #TODO valor del auto
+    real_cost = StringField('Costo Real', validators=[DataRequired()]) #TODO valor del auto
+    source = SelectField('Fuente Venta', choices=SOURCES, validators=[DataRequired()])
+    credit_comission = StringField('Comisión Crédito')
+    card = SelectField('Tarjeta', choices=[(0, False), (1,True)], validators=[DataRequired()])
+    credit = SelectField('Crédito', choices=[(0, False), (1,True)], validators=[DataRequired()])
+    car_as_payment = SelectField('Auto en P.P.', choices=[(0, False), (1,True)], validators=[DataRequired()])
+    mileage = StringField('Kilometraje', validators=[DataRequired()])
+    car_color = StringField('Color del Auto', validators=[DataRequired()])
+    submit = SubmitField('Editar Venta')
+    

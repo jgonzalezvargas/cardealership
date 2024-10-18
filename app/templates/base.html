@@ -40,6 +40,14 @@
 
             {% endif%}
 
+            {% if current_user.role == 'Admin' or current_user.role == 'Ventas' or current_user.role == 'Manager' %}
+
+            <a href="{{ url_for('new_sale') }}">Nueva Venta</a>
+
+            <a href="{{ url_for('sales_list') }}">Lista de Ventas</a>
+
+            {% endif%}
+
             <a href="{{ url_for('logout') }}">Logout</a>
             {% endif %}
         </div>

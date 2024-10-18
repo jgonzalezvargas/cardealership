@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Lista de Ventas</h1>
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Cliente</th>
+                <th scope="col">Marca</th>
+                <th scope="col">Modelo</th>
+                <th scope="col">Version</th>                
+                <th scope="col">PPU</th>
+                <th scope="col">Fecha de Venta</th>
+                <th scope="col">kilometraje</th>
+                <th scope="col">Color</th>
+                <th scope="col">Precio de Venta</th>
+                <th scope="col">Costo Real</th>
+                <th scope="col">Margen Real</th>
+                <th scope="col">Fuente</th>
+                <th scope="col">Usuario</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in sales %}
+            <tr>
+                <td><a href="{{ url_for('client_profile', client_id = s.client.client_id) }}">{{ s.client.client_name }} {{ s.client.client_last_name }}</a></td>
+                <td>{{ s.car.brand }}</td>
+                <td>{{ s.car.model }}</td>
+                <td>{{ s.car.version }}</td>
+                <td><a href="{{ url_for('car_profile', car_id = s.car.car_id) }}">{{ s.ppu }}</a></td>
+                <td>{{ s.sale_date }}</td>
+                <td>{{ s.mileage }}</td>
+                <td>{{ s.car_color }}</td>
+                <td>{{ s.sale_price }}</td>
+                <td>{{ s.real_cost }}</td>
+                <td>{{ s.real_margin }}</td>
+                <td>{{ s.source }}</td>
+                <td> 
+                    {% if current_user.role == 'Admin' %}
+                        <a href="{{ url_for('user', userid = s.user.user_id) }}">{{ s.user.name }} {{ s.user.last_name }}</a>
+                    {% else %}
+                        {{ s.user.name }} {{ s.user.last_name }}
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ url_for('sale', sale_id = s.sale_id) }}">Ver Venta</a>
+
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+{% endblock %}
