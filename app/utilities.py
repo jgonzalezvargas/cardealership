@@ -52,3 +52,13 @@ def validate_rut(rut):
             return(False)
     else:
         return(False)
+    
+
+def get_week(date_obj):
+    if date_obj.day <= 7:
+        return 'W1'
+    elif date_obj.day <= 15:
+        return 'W2'
+    elif date_obj.day <= 23:
+        return 'W3'
+    return 'W4'

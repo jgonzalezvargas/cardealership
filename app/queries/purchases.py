@@ -64,7 +64,7 @@ def get_purchases_list():
 
 def get_purchase(purchase_id):
     query = f"""SELECT cl.client_id, c.car_id,
-                client_name, client_last_name, rut, phone,
+                client_name, client_last_name, rut, cl.phone,
                 brand, model, version, ppu, year, chasis,
                 mileage, purchase_date, negotiated_price, bill_number,
                 m.value as management, stock_val as stock, car_color

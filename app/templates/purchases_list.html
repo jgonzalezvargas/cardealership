@@ -27,7 +27,7 @@
                 <td>{{ p.car.brand }}</td>
                 <td>{{ p.car.model }}</td>
                 <td>{{ p.car.version }}</td>
-                <td><a href="{{ url_for('car_profile', car_id = p.car.car_id) }}">{{ p.ppu }}</a></td>
+                <td><a href="{{ url_for('car_profile', car_id = p.car.car_id) }}">{{ p.car.ppu }}</a></td>
                 <td>{{ p.mileage }}</td>
                 <td>{{ p.purchase_date }}</td>
                 <td>{{ p.negotiated_price }}</td>
@@ -38,7 +38,7 @@
                     {% if current_user.role == 'Admin' %}
                         <a href="{{ url_for('user', userid = p.user.user_id) }}">{{ p.user.name }} {{ p.user.last_name }}</a>
                     {% else %}
-                        {{ p.user }}
+                        {{ p.user.name }} {{ p.user.last_name }}
                     {% endif %}
                 </td>
                 <td>
