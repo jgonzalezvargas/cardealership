@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Lista de Consignaciones</h1>
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Cliente</th>
+                <th scope="col">Marca</th>
+                <th scope="col">Modelo</th>
+                <th scope="col">Version</th>                
+                <th scope="col">PPU</th>
+                <th scope="col">Kilometraje</th>
+                <th scope="col">Fecha de Compra</th>
+                <th scope="col">Precio Negociado</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Gestión</th>
+                <th scope="col">Stock</th>
+                <th scope="col">Usuario</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in purchases %}
+            <tr>
+                <td><a href="{{ url_for('client_profile', client_id = p.client.client_id) }}">{{ p.client.client_name }} {{ p.client.client_last_name }}</a></td>
+                <td>{{ p.car.brand }}</td>
+                <td>{{ p.car.model }}</td>
+                <td>{{ p.car.version }}</td>
+                <td><a href="{{ url_for('car_profile', car_id = p.car.car_id) }}">{{ p.car.ppu }}</a></td>
+                <td>{{ p.mileage }}</td>
+                <td>{{ p.purchase_date }}</td>
+                <td>{{ p.negotiated_price }}</td>
+                <td>{{ p.price }}</td>
+                <td>{{ p.management }}</td>
+                <td>{{ p.stock }}</td>
+                <td> 
+                    {% if current_user.role == 'Admin' %}
+                        <a href="{{ url_for('user', userid = p.user.user_id) }}">{{ p.user.name }} {{ p.user.last_name }}</a>
+                    {% else %}
+                        {{ p.user.name }} {{ p.user.last_name }}
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ url_for('purchase', purchase_id = p.purchase_id) }}">Ver Consignación</a>
+
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+{% endblock %}

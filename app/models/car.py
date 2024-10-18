@@ -1,5 +1,5 @@
 class Car():
-    def __init__(self, car_id, ppu, chasis, brand, model, version, year, client_purchases = None, client_sales = None) -> None:
+    def __init__(self, car_id, ppu= None, chasis= None, brand= None, model= None, version= None, year= None, client_purchases = None, client_sales = None) -> None:
         self.car_id = car_id
         self.ppu = ppu
         self.chasis = chasis

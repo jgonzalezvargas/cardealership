@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Crear Venta</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.client_id.label }}<br>
+            {{ form.client_id(size=1) }}<br>
+            {% for error in form.client_id.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.car_id.label }}<br>
+            {{ form.car_id(size=1) }}<br>
+            {% for error in form.car_id.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.sale_date.label }}<br>
+            {{ form.sale_date(size=32) }}<br>
+            {% for error in form.sale_date.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.sale_price.label }}<br>
+            {{ form.sale_price(size=32) }}<br>
+            {% for error in form.sale_price.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.real_cost.label }}<br>
+            {{ form.real_cost(size=32) }}<br>
+            {% for error in form.real_cost.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.source.label }}<br>
+            {{ form.source(size=1) }}<br>
+            {% for error in form.source.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.credit_comission.label }}<br>
+            {{ form.credit_comission(size=1) }}<br>
+            {% for error in form.credit_comission.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.card.label }}<br>
+            {{ form.card(size=1) }}<br>
+            {% for error in form.card.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.credit.label }}<br>
+            {{ form.credit(size=1) }}<br>
+            {% for error in form.credit.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.car_as_payment.label }}<br>
+            {{ form.car_as_payment(size=1) }}<br>
+            {% for error in form.car_as_payment.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.mileage.label }}<br>
+            {{ form.mileage(size=32) }}<br>
+            {% for error in form.mileage.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.car_color.label }}<br>
+            {{ form.car_color(size=32) }}<br>
+            {% for error in form.car_color.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}
